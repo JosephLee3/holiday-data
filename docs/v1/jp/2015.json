@@ -1,0 +1,95 @@
+{
+  "country": "JP",
+  "csvUrl": "https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv",
+  "days": [
+    {
+      "date": "2015-01-01",
+      "name": "元日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-01-12",
+      "name": "成人の日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-02-11",
+      "name": "建国記念の日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-03-21",
+      "name": "春分の日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-04-29",
+      "name": "昭和の日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-05-03",
+      "name": "憲法記念日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-05-04",
+      "name": "みどりの日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-05-05",
+      "name": "こどもの日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-05-06",
+      "name": "休日",
+      "type": "substitute"
+    },
+    {
+      "date": "2015-07-20",
+      "name": "海の日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-09-21",
+      "name": "敬老の日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-09-22",
+      "name": "休日",
+      "type": "bridge"
+    },
+    {
+      "date": "2015-09-23",
+      "name": "秋分の日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-10-12",
+      "name": "体育の日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-11-03",
+      "name": "文化の日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-11-23",
+      "name": "勤労感謝の日",
+      "type": "holiday"
+    },
+    {
+      "date": "2015-12-23",
+      "name": "天皇誕生日",
+      "type": "holiday"
+    }
+  ],
+  "schemaVersion": 1,
+  "source": "内閣府",
+  "sourceUrl": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html",
+  "year": 2015
+}

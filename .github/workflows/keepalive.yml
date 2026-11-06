@@ -1,0 +1,29 @@
+name: Keepalive
+
+# 公开仓库的定时任务在 60 天无活动后会被 GitHub 自动停用。节假日数据一年
+# 只变几次，所以每月一次空提交来保活。刻意做成自包含的：不要依赖第三方
+# keepalive action。
+on:
+  schedule:
+    - cron: "23 4 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: keepalive
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Empty commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git commit --allow-empty -m "chore: keepalive [skip ci]"
+          git push

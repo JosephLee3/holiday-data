@@ -1,0 +1,35 @@
+name: Smoke test published data
+
+# 校验 GitHub Pages 实际返回的 manifest、sha256 和 schema。
+# Pages 配置好后启用：
+#   Settings -> Secrets and variables -> Actions -> Variables -> PAGES_SMOKE=true
+# 如果使用自定义域名，改下面的 URL。
+on:
+  schedule:
+    - cron: "47 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    if: vars.PAGES_SMOKE == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check published data
+        run: |
+          python -m scripts.check_published \
+            --base-url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/v1"
