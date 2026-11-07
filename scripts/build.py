@@ -14,7 +14,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from . import fetch_cn, fetch_jp, validate
+from . import fetch_cn, fetch_jp, fetch_sg, validate
 from .common import (
     ValidationError,
     iso_utc,
@@ -71,7 +71,7 @@ def _data_path(document: dict[str, Any]) -> str:
 
 def _collect_files(root: Path) -> dict[str, Path]:
     files: dict[str, Path] = {}
-    for country in ("jp", "cn"):
+    for country in ("jp", "cn", "sg"):
         directory = root / country
         if not directory.is_dir():
             continue
@@ -125,6 +125,11 @@ def build_manifest(root: Path, old_manifest: dict[str, Any] | None) -> dict[str,
             for relative in files
             if relative.startswith("cn/")
         ),
+        "sg": sorted(
+            int(Path(relative).stem)
+            for relative in files
+            if relative.startswith("sg/")
+        ),
     }
 
     return {
@@ -144,6 +149,7 @@ def build(
     cn_max_year: int | None = None,
     skip_jp: bool = False,
     skip_cn: bool = False,
+    skip_sg: bool = False,
     check_windows: bool = True,
     all_cn_years: bool = False,
 ) -> dict[str, Any]:
@@ -177,6 +183,18 @@ def build(
             cn_years = sorted(
                 year for year in wanted if cn_min_year <= year <= upper
             )
+
+    sg_documents: list[dict[str, Any]] = []
+    if not skip_sg:
+        sg_documents = fetch_sg.build_docs(min_year=fetch_sg.MIN_YEAR)
+        for document in sg_documents:
+            validate.validate_sg(document)
+        documents.extend(sg_documents)
+        print(
+            "SG: "
+            + ", ".join(f"{document['year']}={len(document['days'])}天"
+                        for document in sg_documents)
+        )
 
     if not skip_cn:
         cn_documents = fetch_cn.build_docs(
@@ -228,6 +246,7 @@ def build(
     print(
         f"published: JP {len(manifest['years']['jp'])} years, "
         f"CN {len(manifest['years']['cn'])} years, "
+        f"SG {len(manifest['years']['sg'])} years, "
         f"dataVersion={manifest['dataVersion']}"
     )
     return manifest
@@ -241,6 +260,7 @@ def main() -> None:
     parser.add_argument("--cn-max-year", type=int, default=None)
     parser.add_argument("--skip-jp", action="store_true")
     parser.add_argument("--skip-cn", action="store_true")
+    parser.add_argument("--skip-sg", action="store_true")
     parser.add_argument("--skip-window-check", action="store_true")
     parser.add_argument(
         "--all-cn-years",
@@ -257,6 +277,7 @@ def main() -> None:
             cn_max_year=args.cn_max_year,
             skip_jp=args.skip_jp,
             skip_cn=args.skip_cn,
+            skip_sg=args.skip_sg,
             check_windows=not args.skip_window_check,
             all_cn_years=args.all_cn_years,
         )

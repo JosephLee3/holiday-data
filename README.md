@@ -8,6 +8,7 @@
 |---|---|---|---|
 | 日本 | [内閣府「国民の祝日」](https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html) | 每年 2 月前后追加下一年 | 每次运行都从页面解析 CSV 链接，不写死 URL；CSV 为 CP932 |
 | 中国 | [国务院办公厅节假日安排通知](https://www.gov.cn/) | 每年 10–11 月公布次年安排 | 通过 gov.cn 搜索接口发现通知，解析器复用 [NateScarlet/holiday-cn](https://github.com/NateScarlet/holiday-cn)（MIT） |
+| 新加坡 | [人力部公共假期](https://www.mom.gov.sg/employment-practices/public-holidays) | 每年公布次年安排 | 页面上挂最近三年的表格；周日假期顺延到周一，按规则推出补假 |
 
 交叉参考（不作为发布源）：
 
@@ -19,16 +20,16 @@
 GitHub Pages 从 `docs/` 发布，数据位于 `docs/v1/`：
 
 ```
-https://<user>.github.io/holiday-data/v1/manifest.json
-https://<user>.github.io/holiday-data/v1/jp/2027.json
-https://<user>.github.io/holiday-data/v1/cn/2026.json
+https://josephlee3.github.io/holiday-data/v1/manifest.json
+https://josephlee3.github.io/holiday-data/v1/jp/2027.json
+https://josephlee3.github.io/holiday-data/v1/cn/2026.json
 ```
 
 备用源：
 
 ```
-https://cdn.jsdelivr.net/gh/<user>/holiday-data@main/docs/v1/manifest.json
-https://raw.githubusercontent.com/<user>/holiday-data/main/docs/v1/manifest.json
+https://cdn.jsdelivr.net/gh/JosephLee3/holiday-data@main/docs/v1/manifest.json
+https://raw.githubusercontent.com/JosephLee3/holiday-data/main/docs/v1/manifest.json
 ```
 
 ## 目录
@@ -38,6 +39,7 @@ scripts/
   build.py              抓取 -> 校验 -> 事务性写入 docs/v1
   fetch_jp.py           内閣府页面 + CSV 解析、休日分类
   fetch_cn.py           中国通知抓取、跨年分区、pending 状态
+  fetch_sg.py           新加坡公共假期抓取、周日顺延
   holiday_cn_parser.py  holiday-cn 解析器（MIT，已注明改动）
   jp_local_calc.py      日本本地计算参考实现（2007–2099）
   validate.py           数据/清单校验
@@ -90,6 +92,26 @@ docs/v1/                发布数据（由脚本生成）
 - `type`: `holiday`（国民の祝日）/ `substitute`（振替休日）/ `bridge`（国民の休日）。
 - 2007 年起生成。更早年份的振替规则不同，不在此管道范围内。
 - CSV 里的 `休日（祝日扱い）` 保留原名，`type` 记为 `holiday`。
+
+### `sg/{year}.json`
+
+```json
+{
+  "schemaVersion": 1,
+  "country": "SG",
+  "year": 2026,
+  "status": "published",
+  "source": "Ministry of Manpower, Singapore",
+  "sourceUrl": "https://www.mom.gov.sg/employment-practices/public-holidays",
+  "days": [
+    { "date": "2026-11-08", "name": "Deepavali", "type": "holiday" },
+    { "date": "2026-11-09", "name": "Deepavali", "type": "observed" }
+  ]
+}
+```
+
+- `type`: `holiday`（假期当天）/ `observed`（假期落在周日、顺延到周一的补假）。
+- 页面只有最近三年，更早的年份没有稳定的官方页面，所以 2025 年起才有数据。
 
 ### `cn/{year}.json`
 
@@ -160,6 +182,11 @@ python3 -m venv .venv
 - 放假日 15–40 天，补班日不超过 15 天。
 - 补班日必须是周六/周日；唯一例外是 2020-02-03（疫情延长假期）。
 - `pending` 文件必须为空，且只允许出现在尚未开始的年份。
+新加坡：
+
+- 年份 >= 2020；每年 8–16 天；日期唯一、升序、属于该年。
+- 必须包含 New Year's Day、Chinese New Year、Labour Day、National Day、Christmas Day。
+- `observed` 必须是周一，且前一天是假期（周日顺延规则）。
 - **更新窗口检查**：日本每年 3 月 1 日后仍缺下一年数据 → 失败；中国每年 12 月 1 日后次年通知仍为 `pending` → 失败。调试时可加 `--skip-window-check`。
 - 工作流失败会发邮件；期间 App 继续使用旧数据。
 

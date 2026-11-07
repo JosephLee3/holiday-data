@@ -1,0 +1,70 @@
+{
+  "country": "SG",
+  "days": [
+    {
+      "date": "2027-01-01",
+      "name": "New Year's Day",
+      "type": "holiday"
+    },
+    {
+      "date": "2027-02-06",
+      "name": "Chinese New Year",
+      "type": "holiday"
+    },
+    {
+      "date": "2027-02-07",
+      "name": "Chinese New Year",
+      "type": "holiday"
+    },
+    {
+      "date": "2027-02-08",
+      "name": "Chinese New Year",
+      "type": "observed"
+    },
+    {
+      "date": "2027-03-10",
+      "name": "Hari Raya Puasa",
+      "type": "holiday"
+    },
+    {
+      "date": "2027-03-26",
+      "name": "Good Friday",
+      "type": "holiday"
+    },
+    {
+      "date": "2027-05-01",
+      "name": "Labour Day",
+      "type": "holiday"
+    },
+    {
+      "date": "2027-05-17",
+      "name": "Hari Raya Haji",
+      "type": "holiday"
+    },
+    {
+      "date": "2027-05-20",
+      "name": "Vesak Day",
+      "type": "holiday"
+    },
+    {
+      "date": "2027-08-09",
+      "name": "National Day",
+      "type": "holiday"
+    },
+    {
+      "date": "2027-10-28",
+      "name": "Deepavali",
+      "type": "holiday"
+    },
+    {
+      "date": "2027-12-25",
+      "name": "Christmas Day",
+      "type": "holiday"
+    }
+  ],
+  "schemaVersion": 1,
+  "source": "Ministry of Manpower, Singapore",
+  "sourceUrl": "https://www.mom.gov.sg/employment-practices/public-holidays",
+  "status": "published",
+  "year": 2027
+}

@@ -16,6 +16,9 @@ CHINA_TZ = timezone(timedelta(hours=8))
 JP_MIN_YEAR = 2007
 JP_DAY_COUNT_RANGE = (14, 24)
 CN_MIN_YEAR = 2008
+
+# 新加坡人力部页面上只挂最近三年。
+SG_MIN_YEAR = 2020
 CN_MIN_OFF_DAYS = 15
 CN_MAX_OFF_DAYS = 40
 CN_MAX_WORK_DAYS = 15
@@ -180,6 +183,54 @@ def validate_cn(document: dict) -> None:
         _expect(required in all_names, f"CN {year}: missing festival {required}")
 
 
+def validate_sg(document: dict) -> None:
+    """新加坡：假期名单固定，周日顺延到周一。"""
+    _expect(document.get("schemaVersion") == SCHEMA_VERSION, "SG: unsupported schemaVersion")
+    _expect(document.get("country") == "SG", "SG: country must be SG")
+    year = document.get("year")
+    _expect(isinstance(year, int), "SG: year is missing")
+    _expect(year >= SG_MIN_YEAR, f"SG: year {year} is below {SG_MIN_YEAR}")
+
+    days = document.get("days")
+    _expect(isinstance(days, list), "SG: days is missing")
+    _expect(8 <= len(days) <= 16, f"SG {year}: expected 8..16 days, got {len(days)}")
+
+    dates = []
+    for day in days:
+        _expect(
+            day.get("type") in {"holiday", "observed"},
+            f"SG {year}: unexpected type {day.get('type')}",
+        )
+        parsed = _parse_day(day.get("date"), f"SG {year}")
+        _expect(parsed.year == year, f"SG {year}: {day.get('date')} is outside the year")
+        _expect(day.get("name"), f"SG {year}: missing name for {day.get('date')}")
+        dates.append(parsed)
+
+    _expect(dates == sorted(dates), f"SG {year}: dates are not sorted")
+    _expect(len(set(dates)) == len(dates), f"SG {year}: duplicate dates")
+
+    names = " ".join(day["name"] for day in days)
+    for required in ("New Year's Day", "Labour Day", "National Day", "Christmas Day"):
+        _expect(required in names, f"SG {year}: missing {required}")
+    _expect("Chinese New Year" in names, f"SG {year}: missing Chinese New Year")
+
+    # 补假必须是周一，且前一天是周日的假期。
+    present = {day["date"] for day in days}
+    for day in days:
+        if day["type"] != "observed":
+            continue
+        parsed = _parse_day(day["date"], f"SG {year}")
+        _expect(
+            parsed.weekday() == 0,
+            f"SG {year}: observed day {day['date']} is not a Monday",
+        )
+        sunday = (parsed - timedelta(days=1)).isoformat()
+        _expect(
+            sunday in present,
+            f"SG {year}: observed day {day['date']} has no Sunday holiday before it",
+        )
+
+
 def validate_manifest(manifest: dict, root: Path | None = None) -> None:
     _expect(
         manifest.get("schemaVersion") == SCHEMA_VERSION,
@@ -213,10 +264,8 @@ def validate_manifest(manifest: dict, root: Path | None = None) -> None:
     listed = set(files)
     actual = {
         path.relative_to(root).as_posix()
-        for path in (root / "jp").glob("*.json")
-    } | {
-        path.relative_to(root).as_posix()
-        for path in (root / "cn").glob("*.json")
+        for country in ("jp", "cn", "sg")
+        for path in (root / country).glob("*.json")
     }
     _expect(listed == actual, f"manifest: file list mismatch: {listed ^ actual}")
 
@@ -263,6 +312,7 @@ def validate_dir(root: Path) -> None:
 
     jp_years: list[int] = []
     cn_years: list[int] = []
+    sg_years: list[int] = []
     for relative in sorted(manifest["files"]):
         document = read_json(root / relative)
         if relative.startswith("jp/"):
@@ -271,10 +321,20 @@ def validate_dir(root: Path) -> None:
         elif relative.startswith("cn/"):
             validate_cn(document)
             cn_years.append(document["year"])
+        elif relative.startswith("sg/"):
+            validate_sg(document)
+            sg_years.append(document["year"])
         else:
             raise ValidationError(f"unexpected data file: {relative}")
 
-    for years, country in ((sorted(jp_years), "JP"), (sorted(cn_years), "CN")):
+    for years, country in (
+        (sorted(jp_years), "JP"),
+        (sorted(cn_years), "CN"),
+        (sorted(sg_years), "SG"),
+    ):
+        # 新加坡是后加的国家，页面上只有最近三年，允许暂时为空。
+        if country == "SG" and not years:
+            continue
         _expect(years, f"{country}: no year files")
         expected = list(range(years[0], years[-1] + 1))
         _expect(years == expected, f"{country}: year files are not contiguous: {years}")
@@ -293,6 +353,9 @@ def validate_dir(root: Path) -> None:
     print(
         f"OK: {len(jp_years)} JP years ({jp_years[0]}..{jp_years[-1]}), "
         f"{len(cn_years)} CN years ({cn_years[0]}..{cn_years[-1]}), "
+        f"{len(sg_years)} SG years"
+        + (f" ({sg_years[0]}..{sg_years[-1]})" if sg_years else "")
+        + ", "
         f"dataVersion={manifest['dataVersion']}"
     )
 

@@ -1,0 +1,80 @@
+{
+  "country": "SG",
+  "days": [
+    {
+      "date": "2026-01-01",
+      "name": "New Year's Day",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-02-17",
+      "name": "Chinese New Year",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-02-18",
+      "name": "Chinese New Year",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-03-21",
+      "name": "Hari Raya Puasa",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-04-03",
+      "name": "Good Friday",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-05-01",
+      "name": "Labour Day",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-05-27",
+      "name": "Hari Raya Haji",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-05-31",
+      "name": "Vesak Day",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-06-01",
+      "name": "Vesak Day",
+      "type": "observed"
+    },
+    {
+      "date": "2026-08-09",
+      "name": "National Day",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-08-10",
+      "name": "National Day",
+      "type": "observed"
+    },
+    {
+      "date": "2026-11-08",
+      "name": "Deepavali",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-11-09",
+      "name": "Deepavali",
+      "type": "observed"
+    },
+    {
+      "date": "2026-12-25",
+      "name": "Christmas Day",
+      "type": "holiday"
+    }
+  ],
+  "schemaVersion": 1,
+  "source": "Ministry of Manpower, Singapore",
+  "sourceUrl": "https://www.mom.gov.sg/employment-practices/public-holidays",
+  "status": "published",
+  "year": 2026
+}

@@ -1,5 +1,5 @@
 {
-  "dataVersion": 20261105120149,
+  "dataVersion": 20261107040100,
   "files": {
     "cn/2008.json": {
       "bytes": 3184,
@@ -205,9 +205,24 @@
       "bytes": 1873,
       "sha256": "8dc3260ebd5dbd90a6d4f9111ff9fa9cab5062a9a40686302b3e249c97761f10",
       "updatedAt": "2026-11-03T00:47:47Z"
+    },
+    "sg/2025.json": {
+      "bytes": 1372,
+      "sha256": "b95c340931dd8928bc72461575dbcecad8f9189c8bdefa1734721f815cac9736",
+      "updatedAt": "2026-11-07T04:01:00Z"
+    },
+    "sg/2026.json": {
+      "bytes": 1560,
+      "sha256": "3bcfb7741726b7abacf6d0c7a564267a0452bb8830a9cb5299b3230c2c47d083",
+      "updatedAt": "2026-11-07T04:01:00Z"
+    },
+    "sg/2027.json": {
+      "bytes": 1378,
+      "sha256": "ede3d8ae3f7b0a30801fb5addd4277c4ff8b56982ff3910d202264a6b8e0f3f3",
+      "updatedAt": "2026-11-07T04:01:00Z"
     }
   },
-  "generatedAt": "2026-11-05T12:01:49Z",
+  "generatedAt": "2026-11-07T04:01:00Z",
   "schemaVersion": 1,
   "years": {
     "cn": [
@@ -251,6 +266,11 @@
       2022,
       2023,
       2024,
+      2025,
+      2026,
+      2027
+    ],
+    "sg": [
       2025,
       2026,
       2027
